@@ -83,15 +83,13 @@ export default function PlanlamaPage() {
         <Button onClick={startPlanning} disabled={!selectedId}>{t("planning.start")}</Button>
       </section>
 
-      {showPlanningGrid && selectedId && (
-        <PlanningGrid
-          sprintId={selectedId}
-          people={people}
-          sprintEndTargets={["Geliştirme", "Tamamlama", "Test Tamamlama", "Analiz Tamamlama"]}
-          components={["Roadmap_Torus", "Teknik RoadMap_Torus", "Kaizen_Torus", "Problem_Torus"]}
-          sprintHours={120} // Bu değer sprint hesaplamasından gelecek
-        />
-      )}
+          {showPlanningGrid && selectedId && (
+            <PlanningGrid
+              sprintId={selectedId}
+              people={people}
+              sprintHours={120} // Bu değer sprint hesaplamasından gelecek
+            />
+          )}
     </div>
   );
 }

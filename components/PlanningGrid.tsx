@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { v4 as uuidv4 } from "uuid";
 import Select from "react-select";
+import { useI18n } from "@/lib/i18n";
 
 type SprintPlanningTask = {
   id: string;
@@ -25,25 +26,30 @@ type SprintPlanningTask = {
 type PlanningGridProps = {
   sprintId: string;
   people: { id: string; firstName: string; lastName: string; role: string }[];
-  sprintEndTargets: string[];
-  components: string[];
   sprintHours: number;
 };
 
-export function PlanningGrid({ sprintId, people, sprintEndTargets, components, sprintHours }: PlanningGridProps) {
+export function PlanningGrid({ sprintId, people, sprintHours }: PlanningGridProps) {
   const [tasks, setTasks] = useState<SprintPlanningTask[]>([]);
   const [personLeaves, setPersonLeaves] = useState<{ id: string; personId: string; type: string; hours: number; description: string }[]>([]);
+  const [components, setComponents] = useState<string[]>([]);
+  const [sprintEndTargets, setSprintEndTargets] = useState<string[]>([]);
+  const [currentStatuses, setCurrentStatuses] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<"planning" | "leaves">("planning");
   const saveTimer = useRef<NodeJS.Timeout | null>(null);
+  const { t } = useI18n();
 
   useEffect(() => {
     const loadPlanningData = async () => {
       try {
-        const [tasksRes, leavesRes] = await Promise.all([
+        const [tasksRes, leavesRes, componentsRes, targetsRes, statusesRes] = await Promise.all([
           fetch(`/api/sprint-planning/${sprintId}`, { cache: "no-store" }),
-          fetch(`/api/sprint-planning/${sprintId}/leaves`, { cache: "no-store" })
+          fetch(`/api/sprint-planning/${sprintId}/leaves`, { cache: "no-store" }),
+          fetch(`/api/components`, { cache: "no-store" }),
+          fetch(`/api/sprint-end-targets`, { cache: "no-store" }),
+          fetch(`/api/current-statuses`, { cache: "no-store" })
         ]);
         
         if (tasksRes.ok) {
@@ -59,10 +65,34 @@ export function PlanningGrid({ sprintId, people, sprintEndTargets, components, s
         } else {
           setPersonLeaves([]);
         }
+
+        if (componentsRes.ok) {
+          const componentsData = await componentsRes.json();
+          setComponents(componentsData);
+        } else {
+          setComponents([]);
+        }
+
+        if (targetsRes.ok) {
+          const targetsData = await targetsRes.json();
+          setSprintEndTargets(targetsData);
+        } else {
+          setSprintEndTargets([]);
+        }
+
+        if (statusesRes.ok) {
+          const statusesData = await statusesRes.json();
+          setCurrentStatuses(statusesData);
+        } else {
+          setCurrentStatuses([]);
+        }
       } catch (error) {
         console.error("Error loading planning data:", error);
         setTasks([]);
         setPersonLeaves([]);
+        setComponents([]);
+        setSprintEndTargets([]);
+        setCurrentStatuses([]);
       } finally {
         setLoading(false);
       }
@@ -132,58 +162,58 @@ export function PlanningGrid({ sprintId, people, sprintEndTargets, components, s
       <div className="space-y-4">
         {/* Tab Navigation */}
         <div className="flex border-b">
-          <button
-            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-              activeTab === "planning"
-                ? "border-primary text-primary"
-                : "border-transparent text-muted-foreground hover:text-foreground"
-            }`}
-            onClick={() => setActiveTab("planning")}
-          >
-            Sprint Planlama
-          </button>
-          <button
-            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-              activeTab === "leaves"
-                ? "border-primary text-primary"
-                : "border-transparent text-muted-foreground hover:text-foreground"
-            }`}
-            onClick={() => setActiveTab("leaves")}
-          >
-            İzin/Eğitim Yönetimi
-          </button>
+            <button
+              className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+                activeTab === "planning"
+                  ? "border-primary text-primary"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
+              }`}
+              onClick={() => setActiveTab("planning")}
+            >
+              {t("tabs.planning")}
+            </button>
+            <button
+              className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+                activeTab === "leaves"
+                  ? "border-primary text-primary"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
+              }`}
+              onClick={() => setActiveTab("leaves")}
+            >
+              {t("tabs.leaves")}
+            </button>
         </div>
 
         {/* Tab Content */}
         {activeTab === "planning" && (
           <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h3 className="text-lg font-medium">Sprint Planlama</h3>
-              <div className="flex items-center gap-3">
-                {saving && <span className="text-xs text-muted-foreground">Kaydediliyor…</span>}
-                {!saving && <span className="text-xs text-muted-foreground">Otomatik kaydediliyor</span>}
-                <Button onClick={addTask}>Yeni Task</Button>
-              </div>
-            </div>
+                <div className="flex justify-between items-center">
+                  <h3 className="text-lg font-medium">{t("tabs.planning")}</h3>
+                  <div className="flex items-center gap-3">
+                    {saving && <span className="text-xs text-muted-foreground">{t("grid.saving")}</span>}
+                    {!saving && <span className="text-xs text-muted-foreground">{t("grid.autoSaving")}</span>}
+                    <Button onClick={addTask}>{t("grid.newTask")}</Button>
+                  </div>
+                </div>
 
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm border-collapse min-w-[2000px]">
                     <thead>
                       <tr className="border-b">
-                        <th className="text-left p-2 border-r min-w-[200px]">Task İsmi</th>
-                        <th className="text-left p-2 border-r min-w-[80px]">SP</th>
-                        <th className="text-left p-2 border-r min-w-[180px]">Sprint Sonu Hedefi</th>
-                        <th className="text-left p-2 border-r min-w-[140px]">Güncel Statü</th>
-                        <th className="text-left p-2 border-r min-w-[250px]">Sorumlu Analist</th>
-                        <th className="text-left p-2 border-r min-w-[250px]">Sorumlu Developer</th>
-                        <th className="text-left p-2 border-r min-w-[180px]">Gecikme Nedeni</th>
-                        <th className="text-left p-2 border-r min-w-[100px]">Analiz Maliyeti</th>
-                        <th className="text-left p-2 border-r min-w-[100px]">Yazılım Maliyeti</th>
-                        <th className="text-left p-2 border-r min-w-[100px]">Analiz Task SP</th>
-                        <th className="text-left p-2 border-r min-w-[100px]">Yazılım Task SP</th>
-                        <th className="text-left p-2 border-r min-w-[100px]">Test Task SP</th>
-                        <th className="text-left p-2 border-r min-w-[180px]">Component</th>
-                        <th className="text-left p-2 min-w-[80px]">İşlemler</th>
+                        <th className="text-left p-2 border-r min-w-[200px]">{t("grid.taskName")}</th>
+                        <th className="text-left p-2 border-r min-w-[80px]">{t("grid.sp")}</th>
+                        <th className="text-left p-2 border-r min-w-[180px]">{t("grid.sprintEndTarget")}</th>
+                        <th className="text-left p-2 border-r min-w-[140px]">{t("grid.currentStatus")}</th>
+                        <th className="text-left p-2 border-r min-w-[250px]">{t("grid.responsibleAnalyst")}</th>
+                        <th className="text-left p-2 border-r min-w-[250px]">{t("grid.responsibleDeveloper")}</th>
+                        <th className="text-left p-2 border-r min-w-[180px]">{t("grid.delayReason")}</th>
+                        <th className="text-left p-2 border-r min-w-[100px]">{t("grid.analysisCost")}</th>
+                        <th className="text-left p-2 border-r min-w-[100px]">{t("grid.softwareCost")}</th>
+                        <th className="text-left p-2 border-r min-w-[100px]">{t("grid.analysisTaskSP")}</th>
+                        <th className="text-left p-2 border-r min-w-[100px]">{t("grid.softwareTaskSP")}</th>
+                        <th className="text-left p-2 border-r min-w-[100px]">{t("grid.testTaskSP")}</th>
+                        <th className="text-left p-2 border-r min-w-[180px]">{t("grid.component")}</th>
+                        <th className="text-left p-2 min-w-[80px]">{t("grid.actions")}</th>
                       </tr>
                     </thead>
                 <tbody>
@@ -211,7 +241,7 @@ export function PlanningGrid({ sprintId, people, sprintEndTargets, components, s
                           value={task.sprintEndTarget}
                           onChange={(e) => updateTask(task.id, "sprintEndTarget", e.target.value)}
                         >
-                          <option value="">Seçin</option>
+                          <option value="">{t("grid.selectTarget")}</option>
                           {sprintEndTargets.map(target => (
                             <option key={target} value={target}>{target}</option>
                           ))}
@@ -223,10 +253,10 @@ export function PlanningGrid({ sprintId, people, sprintEndTargets, components, s
                           value={task.currentStatus}
                           onChange={(e) => updateTask(task.id, "currentStatus", e.target.value)}
                         >
-                          <option value="Başlanmadı">Başlanmadı</option>
-                          <option value="Geliştirme">Geliştirme</option>
-                          <option value="HOLD">HOLD</option>
-                          <option value="Tamamlandı">Tamamlandı</option>
+                          <option value="">{t("grid.selectTarget")}</option>
+                          {currentStatuses.map(status => (
+                            <option key={status} value={status}>{status}</option>
+                          ))}
                         </select>
                       </td>
                       <td className="p-2 border-r min-w-[200px]">
@@ -238,7 +268,7 @@ export function PlanningGrid({ sprintId, people, sprintEndTargets, components, s
                             const values = selectedOptions ? selectedOptions.map(option => option.value) : [];
                             updateTask(task.id, "responsibleAnalyst", values);
                           }}
-                          placeholder="Analist seçin"
+                          placeholder={t("grid.selectAnalyst")}
                           className="text-sm"
                           menuPortalTarget={document.body}
                           styles={{
@@ -271,7 +301,7 @@ export function PlanningGrid({ sprintId, people, sprintEndTargets, components, s
                             const values = selectedOptions ? selectedOptions.map(option => option.value) : [];
                             updateTask(task.id, "responsibleDeveloper", values);
                           }}
-                          placeholder="Developer seçin"
+                          placeholder={t("grid.selectDeveloper")}
                           className="text-sm"
                           menuPortalTarget={document.body}
                           styles={{
@@ -353,7 +383,7 @@ export function PlanningGrid({ sprintId, people, sprintEndTargets, components, s
                           value={task.component}
                           onChange={(e) => updateTask(task.id, "component", e.target.value)}
                         >
-                          <option value="">Seçin</option>
+                          <option value="">{t("grid.selectComponent")}</option>
                           {components.map(comp => (
                             <option key={comp} value={comp}>{comp}</option>
                           ))}
@@ -364,7 +394,7 @@ export function PlanningGrid({ sprintId, people, sprintEndTargets, components, s
                           variant="destructive"
                           size="sm"
                           onClick={() => removeTask(task.id)}
-                        >Sil</Button>
+                        >{t("grid.delete")}</Button>
                       </td>
                     </tr>
                   ))}
@@ -377,7 +407,7 @@ export function PlanningGrid({ sprintId, people, sprintEndTargets, components, s
         {activeTab === "leaves" && (
           <div className="space-y-4">
             <div className="flex justify-between items-center">
-              <h3 className="text-lg font-medium">İzin/Eğitim Yönetimi</h3>
+              <h3 className="text-lg font-medium">{t("leaves.title")}</h3>
               <Button onClick={() => {
                 const newLeave = {
                   id: uuidv4(),
@@ -387,7 +417,7 @@ export function PlanningGrid({ sprintId, people, sprintEndTargets, components, s
                   description: ""
                 };
                 setPersonLeaves([...personLeaves, newLeave]);
-              }} size="sm">Ekle</Button>
+              }} size="sm">{t("leaves.add")}</Button>
             </div>
             
             <div className="space-y-3">
@@ -395,7 +425,7 @@ export function PlanningGrid({ sprintId, people, sprintEndTargets, components, s
                 <div key={leave.id} className="border rounded p-4 space-y-3">
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-sm font-medium mb-1">Kişi</label>
+                      <label className="block text-sm font-medium mb-1">{t("leaves.person")}</label>
                       <select
                         className="w-full border rounded px-3 py-2"
                         value={leave.personId}
@@ -406,7 +436,7 @@ export function PlanningGrid({ sprintId, people, sprintEndTargets, components, s
                           setPersonLeaves(updatedLeaves);
                         }}
                       >
-                        <option value="">Kişi Seçin</option>
+                        <option value="">{t("leaves.selectPerson")}</option>
                         {people.map(person => (
                           <option key={person.id} value={person.id}>
                             {person.firstName} {person.lastName} ({person.role})
@@ -415,7 +445,7 @@ export function PlanningGrid({ sprintId, people, sprintEndTargets, components, s
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-1">Tip</label>
+                      <label className="block text-sm font-medium mb-1">{t("leaves.type")}</label>
                       <select
                         className="w-full border rounded px-3 py-2"
                         value={leave.type}
@@ -426,15 +456,15 @@ export function PlanningGrid({ sprintId, people, sprintEndTargets, components, s
                           setPersonLeaves(updatedLeaves);
                         }}
                       >
-                        <option value="İzin">İzin</option>
-                        <option value="Eğitim">Eğitim</option>
+                        <option value="İzin">{t("leaves.type.leave")}</option>
+                        <option value="Eğitim">{t("leaves.type.training")}</option>
                       </select>
                     </div>
                   </div>
                   
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-sm font-medium mb-1">Saat</label>
+                      <label className="block text-sm font-medium mb-1">{t("leaves.hours")}</label>
                       <input
                         type="number"
                         className="w-full border rounded px-3 py-2"
@@ -448,7 +478,7 @@ export function PlanningGrid({ sprintId, people, sprintEndTargets, components, s
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-1">Açıklama</label>
+                      <label className="block text-sm font-medium mb-1">{t("leaves.description")}</label>
                       <input
                         className="w-full border rounded px-3 py-2"
                         value={leave.description}
@@ -458,7 +488,7 @@ export function PlanningGrid({ sprintId, people, sprintEndTargets, components, s
                           );
                           setPersonLeaves(updatedLeaves);
                         }}
-                        placeholder="Açıklama"
+                        placeholder={t("leaves.description")}
                       />
                     </div>
                   </div>
@@ -471,7 +501,7 @@ export function PlanningGrid({ sprintId, people, sprintEndTargets, components, s
                         setPersonLeaves(personLeaves.filter(l => l.id !== leave.id));
                       }}
                     >
-                      Sil
+                      {t("grid.delete")}
                     </Button>
                   </div>
                 </div>
@@ -479,7 +509,7 @@ export function PlanningGrid({ sprintId, people, sprintEndTargets, components, s
               
               {personLeaves.length === 0 && (
                 <div className="text-center text-muted-foreground py-8">
-                  Henüz izin/eğitim kaydı yok. &quot;Ekle&quot; butonuna tıklayarak ekleyebilirsiniz.
+                  {t("leaves.noRecords")}
                 </div>
               )}
             </div>
@@ -490,8 +520,8 @@ export function PlanningGrid({ sprintId, people, sprintEndTargets, components, s
                   method: "POST",
                   body: JSON.stringify(personLeaves),
                 });
-                alert("İzin/Eğitim bilgileri kaydedildi");
-              }}>Kaydet</Button>
+                alert(t("leaves.saved"));
+              }}>{t("leaves.save")}</Button>
             </div>
           </div>
         )}
@@ -500,7 +530,7 @@ export function PlanningGrid({ sprintId, people, sprintEndTargets, components, s
       {/* Sağ taraf - Kalan Eforlar */}
       <div className="lg:sticky lg:top-4 h-max">
         <div className="border rounded-lg p-4 bg-card">
-          <h3 className="text-lg font-semibold mb-4">Kalan Eforlar</h3>
+          <h3 className="text-lg font-semibold mb-4">{t("remainingEfforts.title")}</h3>
           <div className="space-y-3">
             {people.map(person => {
               const assignedTasks = tasks.filter(task => 
@@ -543,12 +573,12 @@ export function PlanningGrid({ sprintId, people, sprintEndTargets, components, s
                   {/* Progress Bar */}
                   <div className="space-y-1">
                     <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>Planlanan: {plannedHours}h</span>
+                      <span>{t("remainingEfforts.planned")}: {plannedHours}h</span>
                       <span>{progressPercentage.toFixed(1)}%</span>
                     </div>
                     {leaveHours > 0 && (
                       <div className="text-xs text-muted-foreground">
-                        İzin/Eğitim: {leaveHours}h
+                        {t("remainingEfforts.leaveTraining")}: {leaveHours}h
                       </div>
                     )}
                     <div className="w-full bg-gray-200 rounded-full h-2">
@@ -561,7 +591,7 @@ export function PlanningGrid({ sprintId, people, sprintEndTargets, components, s
                       ></div>
                     </div>
                     <div className="text-xs text-muted-foreground">
-                      Sprint: {sprintHours}h
+                      {t("remainingEfforts.sprint")}: {sprintHours}h
                     </div>
                   </div>
                 </div>

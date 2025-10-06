@@ -29,17 +29,32 @@ export default function KonfigurasyonlarPage() {
   const roles = ["Analist", "Developer"] as const;
   const [holidays, setHolidays] = useState<{ id: string; name: string; startDate: string; endDate: string }[]>([]);
   const [newHoliday, setNewHoliday] = useState<{ name: string; startDate: string; endDate: string }>({ name: "", startDate: "", endDate: "" });
+  const [components, setComponents] = useState<string[]>([]);
+  const [newComponent, setNewComponent] = useState<string>("");
+  const [sprintEndTargets, setSprintEndTargets] = useState<string[]>([]);
+  const [newSprintEndTarget, setNewSprintEndTarget] = useState<string>("");
+  const [currentStatuses, setCurrentStatuses] = useState<string[]>([]);
+  const [newCurrentStatus, setNewCurrentStatus] = useState<string>("");
 
   useEffect(() => {
     (async () => {
-      const [cfgRes, holRes] = await Promise.all([
+      const [cfgRes, holRes, compRes, targetsRes, statusesRes] = await Promise.all([
         fetch("/api/config", { cache: "no-store" }),
-        fetch("/api/holidays", { cache: "no-store" })
+        fetch("/api/holidays", { cache: "no-store" }),
+        fetch("/api/components", { cache: "no-store" }),
+        fetch("/api/sprint-end-targets", { cache: "no-store" }),
+        fetch("/api/current-statuses", { cache: "no-store" })
       ]);
       const data = (await cfgRes.json()) as AppConfig;
       const hol = (await holRes.json()) as { id: string; name: string; startDate: string; endDate: string }[];
+      const comp = (await compRes.json()) as string[];
+      const targets = (await targetsRes.json()) as string[];
+      const statuses = (await statusesRes.json()) as string[];
       setConfig(data);
       setHolidays(hol);
+      setComponents(comp);
+      setSprintEndTargets(targets);
+      setCurrentStatuses(statuses);
       setLoading(false);
     })();
   }, []);
@@ -78,6 +93,54 @@ export default function KonfigurasyonlarPage() {
   async function removePerson(id: string) {
     await fetch(`/api/people?id=${encodeURIComponent(id)}`, { method: "DELETE" });
     setConfig(prev => ({ ...prev, people: prev.people.filter(p => p.id !== id) }));
+  }
+
+  async function addComponent() {
+    if (!newComponent.trim()) return alert("Component adı zorunlu");
+    if (components.includes(newComponent.trim())) return alert("Bu component zaten mevcut");
+    
+    const updatedComponents = [...components, newComponent.trim()];
+    await fetch("/api/components", { method: "POST", body: JSON.stringify(updatedComponents) });
+    setComponents(updatedComponents);
+    setNewComponent("");
+  }
+
+  async function removeComponent(component: string) {
+    const updatedComponents = components.filter(c => c !== component);
+    await fetch("/api/components", { method: "POST", body: JSON.stringify(updatedComponents) });
+    setComponents(updatedComponents);
+  }
+
+  async function addSprintEndTarget() {
+    if (!newSprintEndTarget.trim()) return alert("Sprint End Target adı zorunlu");
+    if (sprintEndTargets.includes(newSprintEndTarget.trim())) return alert("Bu Sprint End Target zaten mevcut");
+    
+    const updatedTargets = [...sprintEndTargets, newSprintEndTarget.trim()];
+    await fetch("/api/sprint-end-targets", { method: "POST", body: JSON.stringify(updatedTargets) });
+    setSprintEndTargets(updatedTargets);
+    setNewSprintEndTarget("");
+  }
+
+  async function removeSprintEndTarget(target: string) {
+    const updatedTargets = sprintEndTargets.filter(t => t !== target);
+    await fetch("/api/sprint-end-targets", { method: "POST", body: JSON.stringify(updatedTargets) });
+    setSprintEndTargets(updatedTargets);
+  }
+
+  async function addCurrentStatus() {
+    if (!newCurrentStatus.trim()) return alert("Current Status adı zorunlu");
+    if (currentStatuses.includes(newCurrentStatus.trim())) return alert("Bu Current Status zaten mevcut");
+    
+    const updatedStatuses = [...currentStatuses, newCurrentStatus.trim()];
+    await fetch("/api/current-statuses", { method: "POST", body: JSON.stringify(updatedStatuses) });
+    setCurrentStatuses(updatedStatuses);
+    setNewCurrentStatus("");
+  }
+
+  async function removeCurrentStatus(status: string) {
+    const updatedStatuses = currentStatuses.filter(s => s !== status);
+    await fetch("/api/current-statuses", { method: "POST", body: JSON.stringify(updatedStatuses) });
+    setCurrentStatuses(updatedStatuses);
   }
 
   if (loading) return <div>Yükleniyor…</div>;
@@ -183,7 +246,7 @@ export default function KonfigurasyonlarPage() {
           </div>
         </div>
 
-        {/* Sağ taraf - Kişi Listesi */}
+        {/* Sağ taraf - Kişi Listesi ve Component Yönetimi */}
         <div className="space-y-4">
           <div className="border rounded-lg p-4">
             <div className="flex items-center justify-between mb-3">
@@ -210,6 +273,129 @@ export default function KonfigurasyonlarPage() {
                   ))}
                 </div>
               )}
+            </div>
+          </div>
+
+          {/* Component Yönetimi */}
+          <div className="border rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-lg font-medium">Component Yönetimi</h2>
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex gap-2">
+                <input
+                  className="flex-1 border rounded-md px-3 py-2"
+                  placeholder="Component adı"
+                  value={newComponent}
+                  onChange={(e) => setNewComponent(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && addComponent()}
+                />
+                <Button onClick={addComponent} size="sm">Ekle</Button>
+              </div>
+
+              <div className="max-h-48 overflow-y-auto">
+                {components.length === 0 ? (
+                  <div className="text-center text-muted-foreground py-4">Henüz component eklenmedi.</div>
+                ) : (
+                  <div className="space-y-2">
+                    {components.map((component) => (
+                      <div key={component} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                        <span className="text-sm">{component}</span>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => removeComponent(component)}
+                        >
+                          Sil
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Sprint End Targets Yönetimi */}
+          <div className="border rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-lg font-medium">Sprint End Targets</h2>
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex gap-2">
+                <input
+                  className="flex-1 border rounded-md px-3 py-2"
+                  placeholder="Sprint End Target adı"
+                  value={newSprintEndTarget}
+                  onChange={(e) => setNewSprintEndTarget(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && addSprintEndTarget()}
+                />
+                <Button onClick={addSprintEndTarget} size="sm">Ekle</Button>
+              </div>
+
+              <div className="max-h-48 overflow-y-auto">
+                {sprintEndTargets.length === 0 ? (
+                  <div className="text-center text-muted-foreground py-4">Henüz Sprint End Target eklenmedi.</div>
+                ) : (
+                  <div className="space-y-2">
+                    {sprintEndTargets.map((target) => (
+                      <div key={target} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                        <span className="text-sm">{target}</span>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => removeSprintEndTarget(target)}
+                        >
+                          Sil
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Current Statuses Yönetimi */}
+          <div className="border rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-lg font-medium">Current Statuses</h2>
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex gap-2">
+                <input
+                  className="flex-1 border rounded-md px-3 py-2"
+                  placeholder="Current Status adı"
+                  value={newCurrentStatus}
+                  onChange={(e) => setNewCurrentStatus(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && addCurrentStatus()}
+                />
+                <Button onClick={addCurrentStatus} size="sm">Ekle</Button>
+              </div>
+
+              <div className="max-h-48 overflow-y-auto">
+                {currentStatuses.length === 0 ? (
+                  <div className="text-center text-muted-foreground py-4">Henüz Current Status eklenmedi.</div>
+                ) : (
+                  <div className="space-y-2">
+                    {currentStatuses.map((status) => (
+                      <div key={status} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                        <span className="text-sm">{status}</span>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => removeCurrentStatus(status)}
+                        >
+                          Sil
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
