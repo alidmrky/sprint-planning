@@ -1,0 +1,110 @@
+{
+  "0": {
+    "id": "74b3df56-bd4a-4774-a1ae-0616e4ab6264",
+    "taskName": "Finhub Dwh Altyapısı",
+    "sp": 2.5,
+    "sprintEndTarget": "Geliştirme",
+    "currentStatus": "Geliştirme",
+    "responsibleAnalyst": [
+      "ab155f76-f114-4fff-8ef5-0ef2fdc05afc",
+      "a71af310-e9b8-4654-87c1-e2541560f7be"
+    ],
+    "responsibleDeveloper": [
+      "cc2dda8f-bed9-4483-a37a-d0d78fdaeea0"
+    ],
+    "delayReason": "",
+    "analysisCost": 15,
+    "softwareCost": 20,
+    "analysisTaskSP": 2,
+    "softwareTaskSP": 2,
+    "testTaskSP": 0,
+    "component": "Roadmap_Torus"
+  },
+  "tasks": [
+    {
+      "id": "74b3df56-bd4a-4774-a1ae-0616e4ab6264",
+      "taskName": "Finhub Dwh Altyapısı",
+      "sp": 2.5,
+      "sprintEndTarget": "Geliştirme",
+      "currentStatus": "Geliştirme",
+      "responsibleAnalyst": [
+        "ab155f76-f114-4fff-8ef5-0ef2fdc05afc",
+        "a71af310-e9b8-4654-87c1-e2541560f7be"
+      ],
+      "responsibleDeveloper": [
+        "cc2dda8f-bed9-4483-a37a-d0d78fdaeea0"
+      ],
+      "delayReason": "",
+      "analysisCost": 15,
+      "softwareCost": 20,
+      "analysisTaskSP": 2,
+      "softwareTaskSP": 2,
+      "testTaskSP": 0,
+      "component": "Roadmap_Torus"
+    },
+    {
+      "id": "eb841880-fad3-46e9-8ad6-f88b90da0dcd",
+      "taskName": "Allotment Unit test Geliştirmeleri",
+      "sp": 9,
+      "sprintEndTarget": "Geliştirme",
+      "currentStatus": "Başlanmadı",
+      "responsibleAnalyst": [
+        "ab155f76-f114-4fff-8ef5-0ef2fdc05afc"
+      ],
+      "responsibleDeveloper": [
+        "cc2dda8f-bed9-4483-a37a-d0d78fdaeea0",
+        "bbe0ca7b-a916-4eec-b96c-98bb6cd03a1d"
+      ],
+      "delayReason": "",
+      "analysisCost": 30,
+      "softwareCost": 45,
+      "analysisTaskSP": 0,
+      "softwareTaskSP": 0,
+      "testTaskSP": 0,
+      "component": "Teknik RoadMap_Torus"
+    },
+    {
+      "id": "e14fbb17-2ec4-419d-a68f-aa180658e21b",
+      "taskName": "Eksik Evran Raporu Düzenlemesi",
+      "sp": 3,
+      "sprintEndTarget": "Geliştirme",
+      "currentStatus": "Başlanmadı",
+      "responsibleAnalyst": [
+        "6c64f00b-5e5d-4370-b4f1-e7f0d3a90968"
+      ],
+      "responsibleDeveloper": [
+        "f491d4f4-9808-4267-8ae6-852a0d7601cc"
+      ],
+      "delayReason": "",
+      "analysisCost": 15,
+      "softwareCost": 24,
+      "analysisTaskSP": 0,
+      "softwareTaskSP": 0,
+      "testTaskSP": 0,
+      "component": "Roadmap_Torus"
+    }
+  ],
+  "personLeaves": [
+    {
+      "id": "39a4cf98-31c8-4f15-bcf5-662abab1e328",
+      "personId": "cc2dda8f-bed9-4483-a37a-d0d78fdaeea0",
+      "type": "İzin",
+      "hours": 24,
+      "description": "kafa izni"
+    },
+    {
+      "id": "b251c896-5410-4c81-824e-2fd19dc2523d",
+      "personId": "ab155f76-f114-4fff-8ef5-0ef2fdc05afc",
+      "type": "Eğitim",
+      "hours": 12,
+      "description": "eğitim"
+    },
+    {
+      "id": "3c51ff56-e446-4cdb-8730-c0ff0fc53352",
+      "personId": "a71af310-e9b8-4654-87c1-e2541560f7be",
+      "type": "İzin",
+      "hours": 36,
+      "description": "Yoga Kampı"
+    }
+  ]
+}

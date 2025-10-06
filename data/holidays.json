@@ -1,0 +1,44 @@
+[
+  {
+    "id": "5cf4e528-f8de-4e8a-98c2-29ea26f50c62",
+    "name": "29 Ekim Cumhuriyet bayramı",
+    "startDate": "2025-10-27",
+    "endDate": "2025-10-29"
+  },
+  {
+    "id": "30d12378-4c67-45fe-983a-5893084cf20f",
+    "name": "10 Kasım Atatürkü Anma",
+    "startDate": "2025-11-10",
+    "endDate": "2025-11-10"
+  },
+  {
+    "id": "ce477f0a-cbbf-4736-9309-4cab5d2fc391",
+    "name": "23 Nisan",
+    "startDate": "2025-04-23",
+    "endDate": "2025-04-23"
+  },
+  {
+    "id": "ef5d201d-c876-4ed6-925e-de34e53598d8",
+    "name": "1 Mayıs",
+    "startDate": "2025-05-01",
+    "endDate": "2025-05-01"
+  },
+  {
+    "id": "1b55485e-e66f-468f-bd2f-4c9889a68c9b",
+    "name": "19 Mayıs",
+    "startDate": "2025-05-19",
+    "endDate": "2025-05-19"
+  },
+  {
+    "id": "8980819d-0cfb-4a74-ae86-7ea96451c188",
+    "name": "30 Ağustos",
+    "startDate": "2025-08-30",
+    "endDate": "2025-08-30"
+  },
+  {
+    "id": "7f59c079-15d6-4095-835c-3b132255f3b5",
+    "name": "29 Ekim",
+    "startDate": "2025-10-29",
+    "endDate": "2025-10-29"
+  }
+]

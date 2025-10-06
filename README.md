@@ -1,36 +1,222 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sprint Planning Uygulaması
 
-## Getting Started
+Modern ve kullanıcı dostu bir sprint planlama uygulaması. Takım üyelerinin sprint planlaması, efor hesaplaması ve izin/eğitim yönetimi için tasarlanmıştır.
 
-First, run the development server:
+## 🚀 Özellikler
+
+### 📋 Sprint Yönetimi
+
+- Sprint oluşturma ve düzenleme
+- Sprint başlangıç/bitiş tarihleri
+- İş günü hesaplama (hafta sonları hariç)
+- Resmi tatil günlerini çıkarma
+- Sprint durumu takibi (Kaydedildi, Planlanıyor, Tamamlandı)
+
+### 👥 Takım Yönetimi
+
+- Kişi ekleme/düzenleme/silme
+- Rol bazlı yetkilendirme (Analist, Developer)
+- LDAP entegrasyonu
+- Kişi bazlı efor hesaplama
+
+### 📊 Planlama Grid'i
+
+- Task bazlı sprint planlama
+- Çoklu analist/developer atama
+- Story Point (SP) yönetimi
+- Maliyet hesaplama (Analiz, Yazılım, Test)
+- Component bazlı kategorilendirme
+- Otomatik kaydetme
+
+### 🏖️ İzin/Eğitim Yönetimi
+
+- Kişi bazlı izin/eğitim takibi
+- Saat bazlı hesaplama
+- Efor hesaplamasına dahil etme
+
+### 📅 Resmi Tatil Yönetimi
+
+- Resmi tatil ekleme/düzenleme/silme
+- Tarih aralığı desteği
+- Şablon tatiller (Yılbaşı, 23 Nisan, vb.)
+- İş günü hesaplamasına dahil etme
+
+### 📈 Kalan Efor Takibi
+
+- Kişi bazlı kalan efor gösterimi
+- Progress bar ile görsel takip
+- Planlanan vs. kalan saat karşılaştırması
+- Renk kodlu durum göstergesi
+
+## 🛠️ Teknolojiler
+
+- **Frontend**: Next.js 15, React, TypeScript
+- **Styling**: Tailwind CSS
+- **UI Components**: Radix UI, React Select
+- **State Management**: React Hooks
+- **Data Storage**: JSON dosyaları (yerel)
+- **Date Handling**: date-fns
+- **ID Generation**: UUID
+
+## 📁 Proje Yapısı
+
+```
+sprint-planning/
+├── app/
+│   ├── api/                    # API endpoints
+│   │   ├── config/            # Konfigürasyon API'si
+│   │   ├── people/            # Kişi yönetimi API'si
+│   │   ├── sprints/           # Sprint yönetimi API'si
+│   │   ├── holidays/          # Tatil yönetimi API'si
+│   │   └── sprint-planning/   # Sprint planlama API'si
+│   ├── konfigurasyonlar/      # Konfigürasyon sayfası
+│   ├── planlama/              # Planlama sayfası
+│   ├── sprintler/             # Sprint listesi sayfası
+│   └── globals.css            # Global stiller
+├── components/
+│   ├── ui/                    # UI bileşenleri
+│   └── PlanningGrid.tsx        # Ana planlama grid'i
+├── data/                      # JSON veri dosyaları
+├── lib/                       # Yardımcı fonksiyonlar
+└── public/                    # Statik dosyalar
+```
+
+## 🚀 Kurulum
+
+1. **Projeyi klonlayın**
+
+```bash
+git clone <repository-url>
+cd sprint-planning
+```
+
+2. **Bağımlılıkları yükleyin**
+
+```bash
+npm install
+```
+
+3. **Geliştirme sunucusunu başlatın**
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. **Tarayıcıda açın**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📊 Veri Yapısı
 
-## Learn More
+### Sprint Planning JSON
 
-To learn more about Next.js, take a look at the following resources:
+```json
+{
+  "tasks": [
+    {
+      "id": "uuid",
+      "taskName": "Task Adı",
+      "sp": 2.5,
+      "sprintEndTarget": "Geliştirme",
+      "currentStatus": "Başlanmadı",
+      "responsibleAnalyst": ["analist-id"],
+      "responsibleDeveloper": ["developer-id"],
+      "delayReason": "",
+      "analysisCost": 15,
+      "softwareCost": 20,
+      "analysisTaskSP": 2,
+      "softwareTaskSP": 4,
+      "testTaskSP": 1,
+      "component": "Roadmap_Torus"
+    }
+  ],
+  "personLeaves": [
+    {
+      "id": "uuid",
+      "personId": "person-id",
+      "type": "İzin",
+      "hours": 24,
+      "description": "Yıllık izin"
+    }
+  ]
+}
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🎯 Kullanım Senaryoları
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 1. Sprint Oluşturma
 
-## Deploy on Vercel
+- Sprintler sayfasından yeni sprint ekleyin
+- Başlangıç/bitiş tarihlerini belirleyin
+- Sistem otomatik olarak iş günü hesaplar
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 2. Takım Kurulumu
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Konfigürasyonlar sayfasından kişi ekleyin
+- Rolleri belirleyin (Analist/Developer)
+- LDAP bilgilerini girin
+
+### 3. Sprint Planlama
+
+- Planlama sayfasından sprint seçin
+- Task'ları ekleyin ve düzenleyin
+- Analist/Developer atamaları yapın
+- Maliyetleri hesaplayın
+
+### 4. Efor Takibi
+
+- Kalan eforlar panelinde durumu takip edin
+- İzin/eğitim saatlerini yönetin
+- Progress bar ile görsel takip yapın
+
+## 🔧 API Endpoints
+
+- `GET/PUT /api/config` - Konfigürasyon yönetimi
+- `GET/POST/PUT/DELETE /api/people` - Kişi yönetimi
+- `GET/POST/DELETE /api/sprints` - Sprint yönetimi
+- `GET/POST/DELETE /api/holidays` - Tatil yönetimi
+- `GET/POST /api/sprint-planning/[sprintId]` - Sprint planlama
+- `GET/POST /api/sprint-planning/[sprintId]/leaves` - İzin/eğitim yönetimi
+
+## 📱 Responsive Tasarım
+
+- Desktop: 2 kolonlu layout
+- Tablet: Esnek grid sistemi
+- Mobile: Tek kolon, stack layout
+- Horizontal scroll desteği
+
+## 🎨 UI/UX Özellikleri
+
+- Modern ve temiz tasarım
+- Dark/Light tema desteği
+- Smooth animasyonlar
+- Kullanıcı dostu form validasyonları
+- Otomatik kaydetme
+- Progress göstergeleri
+
+## 🔮 Gelecek Özellikler
+
+- [ ] Excel/CSV import/export
+- [ ] Gantt chart görünümü
+- [ ] Bildirim sistemi
+- [ ] Raporlama modülü
+- [ ] Veritabanı entegrasyonu
+- [ ] Çoklu dil desteği
+
+## 🤝 Katkıda Bulunma
+
+1. Fork yapın
+2. Feature branch oluşturun (`git checkout -b feature/amazing-feature`)
+3. Commit yapın (`git commit -m 'Add amazing feature'`)
+4. Push yapın (`git push origin feature/amazing-feature`)
+5. Pull Request oluşturun
+
+## 📄 Lisans
+
+Bu proje MIT lisansı altında lisanslanmıştır.
+
+## 👨‍💻 Geliştirici
+
+Sprint Planning Uygulaması - Modern sprint yönetimi için tasarlanmış kapsamlı bir çözüm.

@@ -1,0 +1,16 @@
+[
+  {
+    "status": "Planlanıyor",
+    "id": "14a6a1e6-7ac8-4068-bd2a-f8f844207977",
+    "name": "Sprint01",
+    "startDate": "2025-10-01",
+    "endDate": "2025-10-31"
+  },
+  {
+    "status": "Planlanıyor",
+    "id": "459b8b92-a0c9-45ca-92c6-42521ac1ce87",
+    "name": "sprint02",
+    "startDate": "2025-11-01",
+    "endDate": "2025-11-30"
+  }
+]

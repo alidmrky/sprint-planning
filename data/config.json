@@ -1,0 +1,47 @@
+{
+  "dailyPlanningHour": "06:00",
+  "people": [
+    {
+      "id": "cc2dda8f-bed9-4483-a37a-d0d78fdaeea0",
+      "firstName": "Ali",
+      "lastName": "Demirkaya",
+      "role": "Developer",
+      "ldap": "TCADEMIRKAYA"
+    },
+    {
+      "id": "ab155f76-f114-4fff-8ef5-0ef2fdc05afc",
+      "firstName": "Onur",
+      "lastName": "Duman",
+      "role": "Analist",
+      "ldap": "TCODUMAN"
+    },
+    {
+      "id": "a71af310-e9b8-4654-87c1-e2541560f7be",
+      "firstName": "Ece",
+      "lastName": "Duman",
+      "role": "Analist",
+      "ldap": "TCECDUMAN"
+    },
+    {
+      "id": "bbe0ca7b-a916-4eec-b96c-98bb6cd03a1d",
+      "firstName": "Abdullah",
+      "lastName": "Özkesek",
+      "role": "Developer",
+      "ldap": "TCAOZKESEK"
+    },
+    {
+      "id": "6c64f00b-5e5d-4370-b4f1-e7f0d3a90968",
+      "firstName": "Başak",
+      "lastName": "Açıkgöz",
+      "role": "Analist",
+      "ldap": "TCBACIKGOZ"
+    },
+    {
+      "id": "f491d4f4-9808-4267-8ae6-852a0d7601cc",
+      "firstName": "Mert",
+      "lastName": "Karacam",
+      "role": "Developer",
+      "ldap": "TCMEKARACAM"
+    }
+  ]
+}
