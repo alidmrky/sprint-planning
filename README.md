@@ -1,5 +1,7 @@
 # Sprint Planning Uygulaması
 
+![Sprint Planning Dashboard](assets/screenshots/SprintPage.png)
+
 Modern ve kullanıcı dostu bir sprint planlama uygulaması. Takım üyelerinin sprint planlaması, efor hesaplaması ve izin/eğitim yönetimi için tasarlanmıştır.
 
 ## 🚀 Özellikler
@@ -21,6 +23,8 @@ Modern ve kullanıcı dostu bir sprint planlama uygulaması. Takım üyelerinin 
 
 ### 📊 Planlama Grid'i
 
+![Planning Page](assets/screenshots/PlanningPage.png)
+
 - Task bazlı sprint planlama
 - Çoklu analist/developer atama
 - Story Point (SP) yönetimi
@@ -35,6 +39,8 @@ Modern ve kullanıcı dostu bir sprint planlama uygulaması. Takım üyelerinin 
 - Efor hesaplamasına dahil etme
 
 ### 📅 Resmi Tatil Yönetimi
+
+![Configuration Page](assets/screenshots/ConfigurationPage.png)
 
 - Resmi tatil ekleme/düzenleme/silme
 - Tarih aralığı desteği
